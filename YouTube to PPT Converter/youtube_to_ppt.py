@@ -20,7 +20,6 @@ try:
     from pytube import YouTube
     from pptx import Presentation
     from pptx.util import Inches, Pt
-    from pptx.enum.text import PP_ALIGN
 except ImportError as e:
     print(f"Error: Missing required library - {e}")
     print("\nPlease install required packages:")
@@ -147,7 +146,9 @@ class YouTubeToPPTConverter:
             else:
                 if not current_chunk['text']:
                     current_chunk['start'] = entry['start']
-                current_chunk['text'] += ' ' + entry['text']
+                    current_chunk['text'] = entry['text']
+                else:
+                    current_chunk['text'] += ' ' + entry['text']
                 current_chunk['duration'] += entry['duration']
         
         # Add the last chunk
