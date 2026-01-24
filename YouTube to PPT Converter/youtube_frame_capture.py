@@ -107,18 +107,11 @@ class YouTubeFrameCapture:
         
         # Check if any face is blocking the central content area
         for (x, y, w, h) in faces:
-            face_center_x = x + w // 2
-            face_center_y = y + h // 2
-            
             # Calculate how much of the face overlaps with content area
             face_right = x + w
             face_bottom = y + h
             
-            # Check if face center is in content area or if face significantly overlaps
-            in_content_area = (content_left < face_center_x < content_right and 
-                             content_top < face_center_y < content_bottom)
-            
-            # Calculate overlap
+            # Calculate overlap between face and content area
             overlap_x = max(0, min(face_right, content_right) - max(x, content_left))
             overlap_y = max(0, min(face_bottom, content_bottom) - max(y, content_top))
             overlap_area = overlap_x * overlap_y
