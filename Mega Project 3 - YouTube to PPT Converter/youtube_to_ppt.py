@@ -46,7 +46,9 @@ def get_transcript(video_id):
         transcript = YouTubeTranscriptApi.get_transcript(video_id)
         return transcript
     except Exception as e:
+        # Catches specific exceptions from youtube-transcript-api
         print(f"Error fetching transcript: {e}")
+        print("Make sure the video has captions/subtitles available.")
         return None
 
 
@@ -111,18 +113,35 @@ def create_presentation(video_title, slides_content, output_file='output.pptx'):
     prs.slide_height = Inches(7.5)
     
     # Add title slide
-    title_slide_layout = prs.slide_layouts[0]
-    slide = prs.slides.add_slide(title_slide_layout)
-    title = slide.shapes.title
-    subtitle = slide.placeholders[1]
-    
-    title.text = video_title
-    subtitle.text = "Generated from YouTube Video"
+    try:
+        title_slide_layout = prs.slide_layouts[0]
+        slide = prs.slides.add_slide(title_slide_layout)
+        title = slide.shapes.title
+        title.text = video_title
+        # Try to add subtitle if placeholder exists
+        if len(slide.placeholders) > 1:
+            subtitle = slide.placeholders[1]
+            subtitle.text = "Generated from YouTube Video"
+    except (IndexError, KeyError):
+        # If standard layout fails, use blank layout for title
+        blank_layout = prs.slide_layouts[6] if len(prs.slide_layouts) > 6 else prs.slide_layouts[0]
+        slide = prs.slides.add_slide(blank_layout)
+        title_shape = slide.shapes.add_textbox(
+            Inches(0.5), Inches(2), Inches(9), Inches(2)
+        )
+        title_frame = title_shape.text_frame
+        title_frame.text = video_title
+        title_frame.paragraphs[0].font.size = Pt(44)
+        title_frame.paragraphs[0].font.bold = True
+        title_frame.paragraphs[0].alignment = PP_ALIGN.CENTER
     
     # Add content slides
     for i, content in enumerate(slides_content, 1):
-        # Use blank layout for more control
-        blank_layout = prs.slide_layouts[6]
+        # Use blank layout for more control, or first available layout
+        try:
+            blank_layout = prs.slide_layouts[6] if len(prs.slide_layouts) > 6 else prs.slide_layouts[0]
+        except IndexError:
+            blank_layout = prs.slide_layouts[0]
         slide = prs.slides.add_slide(blank_layout)
         
         # Add title
