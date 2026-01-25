@@ -10,5 +10,10 @@ adding my own practice, notes, and small improvements.
 - Creating small practice programs
 - Learning Git and GitHub workflow
 
+### Mega Projects
+1. **Jarvis** - Voice assistant with AI integration
+2. **AI AutoReply Bot** - Automated messaging bot
+3. **YouTube to PPT Converter** - Convert YouTube video transcripts to PowerPoint presentations
+
 ### Status
 Ongoing learning (updated weekly)
